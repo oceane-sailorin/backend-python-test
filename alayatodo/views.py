@@ -78,6 +78,7 @@ def todos_POST():
         "INSERT INTO todos (user_id, description) VALUES ({}, '{}')".format(session['user']['id'],request.form.get('description', ''))     
     )
     g.db.commit()
+    flash('Todo inserted')
     return redirect('/todo')
 
 @app.route('/todo/<id>/completed', methods=['POST'])
@@ -99,6 +100,7 @@ def todo_delete(id):
         return redirect('/login')
     g.db.execute("DELETE FROM todos WHERE id = {} and user_id={}".format(id, session['user']['id']))
     g.db.commit()
+    flash('Todo deleted')
     return redirect('/todo')
 
 @app.route('/todo/<id>/json', methods=['GET'])
