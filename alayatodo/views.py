@@ -5,7 +5,8 @@ from flask import (
     render_template,
     request,
     session,
-    flash
+    flash,
+    jsonify
     )
 
 
@@ -98,4 +99,15 @@ def todo_delete(id):
         return redirect('/login')
     g.db.execute("DELETE FROM todos WHERE id = {} and user_id={}".format(id, session['user']['id']))
     g.db.commit()
+    return redirect('/todo')
+
+@app.route('/todo/<id>/json', methods=['GET'])
+def todo_json(id):
+    if not session.get('logged_in'):
+        return redirect('/login')
+    cur = g.db.execute("SELECT * FROM todos WHERE id ={} and user_id={}".format(id, session['user']['id']))
+    todo = cur.fetchone()
+    if todo:
+        json_data=dict(todo)
+        return jsonify(json_data)
     return redirect('/todo')
